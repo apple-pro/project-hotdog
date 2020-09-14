@@ -43,6 +43,7 @@ class ViewController: UIViewController {
                     let result = bestResult.identifier
                     print("result: \(result)")
                     self.resultLabel.text = result.contains("hotdog") ? "Hotdog!" : "Not Hotdog!"
+                    self.navigationItem.title = result.capitalized
                 }
             }
             
