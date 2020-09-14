@@ -29,6 +29,25 @@ class ViewController: UIViewController {
         present(imagePicker, animated: true, completion: nil)
     }
     
+    func detect(image: UIImage) {
+        guard let ciImage = CIImage(image: image) else { fatalError("Failed to convert image") }
+        guard let model = try? VNCoreMLModel(for: Inceptionv3().model) else { fatalError("Failed to load model") }
+        
+        let request = VNCoreMLRequest(model: model) { (request, error) in
+            guard let results = request.results as? [VNClassificationObservation] else { fatalError("Failed to classify image") }
+            
+            print(results)
+        }
+        
+        let handler = VNImageRequestHandler(ciImage: ciImage)
+        
+        do {
+            try handler.perform([request])
+        } catch {
+            print(error)
+        }
+    }
+    
 }
 
 extension ViewController: UIImagePickerControllerDelegate {
@@ -37,6 +56,7 @@ extension ViewController: UIImagePickerControllerDelegate {
         
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             imageView.image = image
+            detect(image: image)
         }
         
         imagePicker.dismiss(animated: true, completion: nil)
