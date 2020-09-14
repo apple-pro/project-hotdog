@@ -13,6 +13,7 @@ import Vision
 class ViewController: UIViewController {
 
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var resultLabel: UILabel!
     
     let imagePicker = UIImagePickerController()
     
@@ -36,7 +37,15 @@ class ViewController: UIViewController {
         let request = VNCoreMLRequest(model: model) { (request, error) in
             guard let results = request.results as? [VNClassificationObservation] else { fatalError("Failed to classify image") }
             
-            print(results)
+            if let bestResult = results.first {
+                
+                DispatchQueue.main.async {
+                    let result = bestResult.identifier
+                    print("result: \(result)")
+                    self.resultLabel.text = result.contains("hotdog") ? "Hotdog!" : "Not Hotdog!"
+                }
+            }
+            
         }
         
         let handler = VNImageRequestHandler(ciImage: ciImage)
